@@ -4,9 +4,15 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "parcel-bundler": "^1.12.4"
+    "parcel-bundler": "^1.12.4",
+    "parcel-plugin-asset-copier": "^1.0.0"
   },
   "dependencies": {
-    "three": "^0.115.0"
+    "three": "^0.114.0"
+  },
+  "assetsPath":"res",
+  "scripts":{
+    "build":"parcel build index.html",
+    "dev":"parcel index.html"
   }
 }
