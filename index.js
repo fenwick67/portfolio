@@ -4,7 +4,9 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import {GUI} from 'three/examples/jsm/libs/dat.gui.module'
 import {OutlineEffect} from "three/examples/jsm/effects/OutlineEffect.js"
-import {getOutdoorLighting} from "./lib/entities"
+import {getOutdoorLighting, getEntity, entities} from "./lib/entities"
+import { loadAll } from "./lib/loader";
+import { waterMaterial } from "./lib/waterShader";
 
 var scene = new Scene();
 var camera = new PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 2000 );
@@ -15,41 +17,13 @@ document.body.appendChild( renderer.domElement );
 
 
 var loader = new GLTFLoader();
-var mixer;
-loader.load('scene.glb', function ( gltf ) {
-    console.log(gltf)
-    scene.add( gltf.scene );
-    scene.traverse(function(o){
-        if (o.material && o.name){// pbr material from export
-            o.material = new MeshToonMaterial({
-                map: o.material.map,
-                shininess: 15,
-                // specular: 0,
-                transparent: !!o.material.transparent,
-                skinning: !!o.material.skinning
-            });
-        }
-        if (o.name == 'Plane'){
-            o.receiveShadow = true;
-        }
-        else if (o.name == "Armature"){
-            o.traverse(function(m){
-                if (m.material){m.castShadow = true; m.receiveShadow = true;}
-            })
-        }
-        console.log(o)
-    })
-    mixer = new AnimationMixer( gltf.scene );
-    var action = mixer.clipAction(  gltf.animations.find(a=>a.name == "walk") );
-    action.play()
-    ready = true;
-    
+loadAll(function(err){
+    if(err){console.error(err)}
+    // set up scene
+    scene.add(entities.scene)
+    getOutdoorLighting().forEach(l=>scene.add(l))
     render();
-}, undefined, function ( error ) {
-    console.error('dammit')
-	console.error( error );
-
-} );
+})
 
 var controls = new OrbitControls( camera, renderer.domElement );
 // controls.addEventListener( 'change', render ); // use if there is no animation loop
@@ -79,23 +53,16 @@ function onWindowResize() {
 
 }
 var clock = new Clock();
-var ready = false;
 function render(){
-    if (!ready){return}
     var delta = clock.getDelta();
 
-    mixer.update(delta);
+    entities.playerMixer.update(delta);
     // console.log(scene)
 
-    scene.traverse(function(o){
-        if (o.name == 'Armature'){
-            o.position.z = Math.sin(clock.getElapsedTime()) * 3
-            o.position.x = Math.cos(clock.getElapsedTime()) * 3
-            o.setRotationFromAxisAngle(new Vector3(0, 1, 0), -clock.getElapsedTime())
-        }
-    })
+    entities.player.setMoveAnimationForSpeed(2 * Math.sin(clock.getElapsedTime()/5) * Math.sin(clock.getElapsedTime()/5) );
     effect.render(scene, camera);
 
+    entities.water.material.uniforms.time.value = clock.getElapsedTime()
 
     window.requestAnimationFrame(render);
 }
@@ -133,4 +100,4 @@ function render(){
 
 renderer.toneMapping = Uncharted2ToneMapping;
 renderer.toneMappingWhitePoint = 1.0;
-renderer.toneMappingExposure = 1.3;
+renderer.toneMappingExposure = 1.0;
