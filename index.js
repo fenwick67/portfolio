@@ -28,7 +28,7 @@ loadAll(function(err){
 var controls = new OrbitControls( camera, renderer.domElement );
 // controls.addEventListener( 'change', render ); // use if there is no animation loop
 controls.minDistance = 10;
-controls.maxDistance = 20;
+controls.maxDistance = 100;
 controls.target.set( 0, 0, - 0.2 );
 controls.update();
 
