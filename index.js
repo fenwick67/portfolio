@@ -7,10 +7,18 @@ import {OutlineEffect} from "three/examples/jsm/effects/OutlineEffect.js"
 import {getOutdoorLighting, getEntity, entities} from "./lib/entities"
 import { loadAll } from "./lib/loader";
 import { waterMaterial } from "./lib/waterShader";
+import {input} from './lib/input'
 
 
 var scene = new Scene();
+
+// to make debugging easier
+window.scene = scene;
+window.input = input;
+
 var camera = new PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 2000 );
+camera.position.set(-10, 10, -10);
+scene.add(camera)
 
 var renderer = new WebGLRenderer();
 // THIS is why my stuff all looked different than in Blender
@@ -48,17 +56,20 @@ loadAll(function(err){
     if(err){console.error(err)}
     // set up scene
     scene.add(entities.scene)
-    getOutdoorLighting().forEach(l=>scene.add(l))
+    getOutdoorLighting()
     render();
 })
 
-var controls = new OrbitControls( camera, renderer.domElement );
-// controls.addEventListener( 'change', render ); // use if there is no animation loop
-controls.minDistance = 10;
-controls.maxDistance = 100;
-controls.target.set( 0, 0, - 0.2 );
-controls.maxPolarAngle = 1.0
-controls.update();
+// var controls = new OrbitControls( camera, renderer.domElement );
+// // controls.addEventListener( 'change', render ); // use if there is no animation loop
+// controls.minDistance = 10;
+// controls.maxDistance = 100;
+// controls.target.set( 0, 0, - 0.2 );
+// controls.maxPolarAngle = 1.0
+// controls.enableKeys = false;
+// controls.panSpeed = 0;
+// controls.keyPanSpeed = 0;
+// controls.update();
 
 window.addEventListener( 'resize', onWindowResize, false );
 
@@ -83,13 +94,27 @@ clock.start();
 function render(){
     var delta = clock.getDelta();
 
-    entities.playerMixer.update(delta);
     // console.log(scene)
 
-    entities.player.setMoveAnimationForSpeed(2 * Math.sin(clock.getElapsedTime()/5) * Math.sin(clock.getElapsedTime()/5) );
     effect.render(scene, camera);
 
     entities.water.material.uniforms.time.value = clock.getElapsedTime()
+
+    input.update(delta);
+
+
+    scene.traverse(o=>{
+        if (o.userData.update){
+            o.userData.update(delta)
+        }
+    })
+
+    // controls.target.set(entities.character.location)
+
+    camera.position.addVectors(new Vector3(0,10,15), entities.playerFollower.position)
+    camera.lookAt(entities.playerFollower.position);
+
+    
 
     window.requestAnimationFrame(render);
 }
