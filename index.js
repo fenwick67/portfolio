@@ -23,9 +23,10 @@ scene.add(camera)
 var renderer = new WebGLRenderer();
 // THIS is why my stuff all looked different than in Blender
 renderer.outputEncoding = sRGBEncoding;
+var loaded = false
 
 function resizeRenderer(){
-    var targetResolutionY = 300// target Y resolution
+    var targetResolutionY = 400// target Y resolution
     var pixelSize = window.innerHeight / targetResolutionY;
     pixelSize = Math.floor(pixelSize);
     pixelSize = Math.max(pixelSize, 1);
@@ -56,8 +57,8 @@ loadAll(function(err){
     if(err){console.error(err)}
     // set up scene
     scene.add(entities.scene)
-    getOutdoorLighting()
-    render();
+    getOutdoorLighting().forEach(l=>scene.add(l))
+    loaded = true;
 })
 
 // var controls = new OrbitControls( camera, renderer.domElement );
@@ -73,7 +74,6 @@ loadAll(function(err){
 
 window.addEventListener( 'resize', onWindowResize, false );
 
-getOutdoorLighting().forEach(l=>scene.add(l))
 
 renderer.shadowMap.type = VSMShadowMap;
 renderer.shadowMap.enabled = true;
@@ -92,6 +92,10 @@ function onWindowResize() {
 var clock = new Clock();
 clock.start(); 
 function render(){
+    if (!loaded){
+        window.requestAnimationFrame(render)
+        return;
+    }
     var delta = clock.getDelta();
 
     // console.log(scene)
@@ -114,10 +118,12 @@ function render(){
     camera.position.addVectors(new Vector3(0,10,15), entities.playerFollower.position)
     camera.lookAt(entities.playerFollower.position);
 
-    
-
     window.requestAnimationFrame(render);
+
 }
+
+render()
+
 
 // var toneMappingOptions = {
 //     None: NoToneMapping,
@@ -153,3 +159,4 @@ function render(){
 renderer.toneMapping = Uncharted2ToneMapping;
 renderer.toneMappingWhitePoint = 1.0;
 renderer.toneMappingExposure = 1.0;
+

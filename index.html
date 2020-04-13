@@ -1,11 +1,41 @@
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#afa">
+
         <style>
-        body,html{margin:0;overflow:hidden;}
+        :root{ 
+            --button-color:rgba(255,255,255,0.8);
+            --button-active-bg: hsla(323, 100%, 58%, 0.4);
+        }
+        body,html{
+            margin:0;
+            overflow:hidden;
+        }
         canvas {display:block;}
+        #touch-right.pressed #button{
+            background:var(--button-active-bg) !important;
+        }
+        #touch-left.pressed #stick-center{
+            background:var(--button-active-bg) !important;
+        }
         </style>
     </head>
     <body>
+        <div id="touch-container" style="box-sizing: border-box;visibility:hidden;">
+            <div id="touch-left" style="width:50vw;height:40vh;background:rgba(0,0,0,0.0);position:absolute;bottom:0;left:0;">
+                <div id="stick" style="border:solid 0.05in var(--button-color); border-radius:100%;width:1in;height:1in;position:absolute;left:20%;bottom:1in;">
+                    <div id="stick-center" style="width:0.75in;height:0.75in;border:solid 0.05in var(--button-color);background:rgba(255,255,255,0.3);border-radius:100%;margin:calc(25% - 0.175in);position:relative;">
+                    </div>
+                </div>
+            </div>
+            <div id="touch-right" style="width:50vw;height:40vh;background:rgba(255, 255, 255, 0.0);position:absolute;right:0;bottom:0;">
+                <div id="button" style="text-align:center;border:solid 0.05in var(--button-color); border-radius:100%;width:1in;height:1in;position:absolute;right:20%;bottom:1in;">
+                    <div style="text-align: center;height:1in;line-height:1in;width:1in;font-size:0.4in;font-family: Arial, Helvetica, sans-serif;color:var(--button-color);user-select: none;">A</div>
+                </div>
+            </div>
+        </div>
         <script src="index.js"></script>
     </body>
 </html>
