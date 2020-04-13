@@ -8,6 +8,7 @@ import {getOutdoorLighting, getEntity, entities} from "./lib/entities"
 import { loadAll } from "./lib/loader";
 import { waterMaterial } from "./lib/waterShader";
 import {input} from './lib/input'
+import {playerCam} from './lib/playerCam'
 
 
 var scene = new Scene();
@@ -16,9 +17,7 @@ var scene = new Scene();
 window.scene = scene;
 window.input = input;
 
-var camera = new PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 2000 );
-camera.position.set(-10, 10, -10);
-scene.add(camera)
+scene.add(playerCam.camera)
 
 var renderer = new WebGLRenderer();
 // THIS is why my stuff all looked different than in Blender
@@ -83,8 +82,8 @@ var effect = new OutlineEffect( renderer, {defaultThickness:0.005});
 
 function onWindowResize() {
 
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+    playerCam.camera.aspect = window.innerWidth / window.innerHeight;
+    playerCam.camera.updateProjectionMatrix();
 
     resizeRenderer()
 
@@ -100,7 +99,7 @@ function render(){
 
     // console.log(scene)
 
-    effect.render(scene, camera);
+    effect.render(scene, playerCam.camera);
 
     entities.water.material.uniforms.time.value = clock.getElapsedTime()
 
@@ -129,8 +128,8 @@ function render(){
 
     // controls.target.set(entities.character.location)
 
-    camera.position.addVectors(new Vector3(0,10,15), entities.playerFollower.position)
-    camera.lookAt(entities.playerFollower.position);
+    // camera.position.addVectors(new Vector3(0,10,15), entities.playerFollower.position)
+    // camera.lookAt(entities.playerFollower.position);
 
     window.requestAnimationFrame(render);
 

@@ -23,10 +23,30 @@
         #touch-left.pressed #stick-center{
             background:var(--button-active-bg) !important;
         }
+        canvas{
+            image-rendering:crisp-edges;
+            image-rendering:-moz-crisp-edges;
+            image-rendering:pixelated;
+        }
+        #dialog-canvas{
+            position:fixed;
+            bottom:0vh;
+            width:100%;
+            height:100%;
+            max-height:50vh;
+            object-fit:contain;
+            background: transparent;
+            object-position:center top;
+            transition: bottom 0.3s cubic-bezier(0.63, 1.4, 0.63, 0.99);
+        }
+        #dialog-canvas:not(.active){
+            bottom:-50vh;
+        }
         </style>
     </head>
     <body>
-        <div id="touch-container" style="box-sizing: border-box;visibility:hidden;">
+        <canvas id="dialog-canvas" width="220" height="140"></canvas>
+        <div id="touch-container" style="box-sizing: border-box;visibility:hidden;z-index:20">
             <div id="touch-left" style="width:50vw;height:40vh;background:rgba(0,0,0,0.0);position:absolute;bottom:0;left:0;">
                 <div id="stick" style="border:solid 0.05in var(--button-color); border-radius:100%;width:1in;height:1in;position:absolute;left:20%;bottom:1in;">
                     <div id="stick-center" style="width:0.75in;height:0.75in;border:solid 0.05in var(--button-color);background:rgba(255,255,255,0.3);border-radius:100%;margin:calc(25% - 0.175in);position:relative;">
