@@ -104,12 +104,26 @@ function render(){
 
     entities.water.material.uniforms.time.value = clock.getElapsedTime()
 
-    input.update(delta);
+
+    /*
+        handle 30 or fewer FPS
+        MOST update functions handle delta correctly but not all of them.
+        this gives us a reasonable approximation - things that don't use delta (usually damping) will 
+        get done twice, things that DO use delta should handle it appropriately since we divide by the delta.
+    */
+    var nUpdates = Math.floor(delta / (1/61)) + 1;
+    nUpdates = Math.min(nUpdates,3);
+
+    for (var i = 0; i < nUpdates; i++){
+        input.update(delta/nUpdates);
+    }
 
 
     scene.traverse(o=>{
         if (o.userData.update){
-            o.userData.update(delta)
+            for (var i = 0; i < nUpdates; i++){
+                o.userData.update(delta/ nUpdates)
+            }
         }
     })
 
