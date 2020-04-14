@@ -25,7 +25,7 @@ renderer.outputEncoding = sRGBEncoding;
 var loaded = false
 
 function resizeRenderer(){
-    var targetResolutionY = 400// target Y resolution
+    var targetResolutionY = 400
     var pixelSize = window.innerHeight / targetResolutionY;
     pixelSize = Math.floor(pixelSize);
     pixelSize = Math.max(pixelSize, 1);
@@ -74,19 +74,14 @@ loadAll(function(err){
 window.addEventListener( 'resize', onWindowResize, false );
 
 
-renderer.shadowMap.type = VSMShadowMap;
+// renderer.shadowMap.type = VSMShadowMap;
 renderer.shadowMap.enabled = true;
 
 var effect = new OutlineEffect( renderer, {defaultThickness:0.005});
 // effect.setSize(20, 20, true);
 
 function onWindowResize() {
-
-    playerCam.camera.aspect = window.innerWidth / window.innerHeight;
-    playerCam.camera.updateProjectionMatrix();
-
     resizeRenderer()
-
 }
 var clock = new Clock();
 clock.start(); 
