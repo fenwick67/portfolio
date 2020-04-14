@@ -74,7 +74,7 @@ loadAll(function(err){
 window.addEventListener( 'resize', onWindowResize, false );
 
 
-// renderer.shadowMap.type = VSMShadowMap;
+renderer.shadowMap.type = PCFSoftShadowMap;
 renderer.shadowMap.enabled = true;
 
 var effect = new OutlineEffect( renderer, {defaultThickness:0.005});
@@ -166,5 +166,5 @@ render()
 
 renderer.toneMapping = Uncharted2ToneMapping;
 renderer.toneMappingWhitePoint = 1.0;
-renderer.toneMappingExposure = 1.0;
+renderer.toneMappingExposure = 1.1;
 
