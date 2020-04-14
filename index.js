@@ -25,7 +25,7 @@ renderer.outputEncoding = sRGBEncoding;
 var loaded = false
 
 function resizeRenderer(){
-    var targetResolutionY = 400
+    var targetResolutionY = 450
     var pixelSize = window.innerHeight / targetResolutionY;
     pixelSize = Math.floor(pixelSize);
     pixelSize = Math.max(pixelSize, 1);
