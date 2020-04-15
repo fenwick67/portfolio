@@ -77,7 +77,7 @@ window.addEventListener( 'resize', onWindowResize, false );
 renderer.shadowMap.type = PCFSoftShadowMap;
 renderer.shadowMap.enabled = true;
 
-var effect = new OutlineEffect( renderer, {defaultThickness:0.005});
+// var effect = new OutlineEffect( renderer, {defaultThickness:0.005});
 // effect.setSize(20, 20, true);
 
 function onWindowResize() {
@@ -94,7 +94,7 @@ function render(){
 
     // console.log(scene)
 
-    effect.render(scene, playerCam.camera);
+    renderer.render(scene, playerCam.camera);
 
     entities.water.material.uniforms.time.value = clock.getElapsedTime()
 
