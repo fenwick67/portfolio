@@ -2,13 +2,14 @@
 import {Scene, PerspectiveCamera, WebGLRenderer, HemisphereLight, AnimationMixer, Clock, HemisphereLightHelper, DirectionalLight, DirectionalLightHelper, ACESFilmicToneMapping, NoToneMapping, LinearToneMapping, ReinhardToneMapping, Uncharted2ToneMapping, CineonToneMapping, MeshToonMaterial, MeshBasicMaterial, OrthographicCamera, AmbientLight, PCFSoftShadowMap, VSMShadowMap, Vector3, sRGBEncoding, Vector2} from "three"
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import {GUI} from 'three/examples/jsm/libs/dat.gui.module'
+// import {GUI} from 'three/examples/jsm/libs/dat.gui.module'
 import {OutlineEffect} from "three/examples/jsm/effects/OutlineEffect.js"
 import {getOutdoorLighting, getEntity, entities} from "./lib/entities"
 import { loadAll } from "./lib/loader";
 import { waterMaterial } from "./lib/waterShader";
 import {input} from './lib/input'
 import {playerCam} from './lib/playerCam'
+import {updateObjects} from './lib/updatable'
 
 
 var scene = new Scene();
@@ -19,7 +20,7 @@ window.input = input;
 
 scene.add(playerCam.camera)
 
-var renderer = new WebGLRenderer();
+var renderer = new WebGLRenderer({antialias:true});
 // THIS is why my stuff all looked different than in Blender
 renderer.outputEncoding = sRGBEncoding;
 var loaded = false
@@ -97,6 +98,7 @@ function render(){
     renderer.render(scene, playerCam.camera);
 
     entities.water.material.uniforms.time.value = clock.getElapsedTime()
+    entities.streams.forEach(s=>s.material.uniforms.time.value = clock.getElapsedTime())
 
 
     /*
@@ -105,21 +107,18 @@ function render(){
         this gives us a reasonable approximation - things that don't use delta (usually damping) will 
         get done twice, things that DO use delta should handle it appropriately since we divide by the delta.
     */
-    var nUpdates = Math.floor(delta / (1/61)) + 1;
-    nUpdates = Math.min(nUpdates,3);
+    // var nUpdates = Math.floor(delta / (1/31)) + 1;
+    // nUpdates = Math.min(nUpdates,3);
+    // if (nUpdates > 1){
+    //     console.log("JANK",nUpdates)
+    // }
+    var nUpdates = 1;
 
     for (var i = 0; i < nUpdates; i++){
         input.update(delta/nUpdates);
     }
 
-
-    scene.traverse(o=>{
-        if (o.userData.update){
-            for (var i = 0; i < nUpdates; i++){
-                o.userData.update(delta/ nUpdates)
-            }
-        }
-    })
+    updateObjects(scene, delta)
 
     // controls.target.set(entities.character.location)
 
