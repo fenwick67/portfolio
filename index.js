@@ -20,13 +20,13 @@ window.input = input;
 
 scene.add(playerCam.camera)
 
-var renderer = new WebGLRenderer({antialias:true});
+var renderer = new WebGLRenderer({antialias:false});
 // THIS is why my stuff all looked different than in Blender
 renderer.outputEncoding = sRGBEncoding;
 var loaded = false
 
 function resizeRenderer(){
-    var targetResolutionY = 450
+    var targetResolutionY = 600
     var pixelSize = window.innerHeight / targetResolutionY;
     pixelSize = Math.floor(pixelSize);
     pixelSize = Math.max(pixelSize, 1);
