@@ -2,7 +2,7 @@
 import {Scene, PerspectiveCamera, WebGLRenderer, HemisphereLight, AnimationMixer, Clock, HemisphereLightHelper, DirectionalLight, DirectionalLightHelper, ACESFilmicToneMapping, NoToneMapping, LinearToneMapping, ReinhardToneMapping, Uncharted2ToneMapping, CineonToneMapping, MeshToonMaterial, MeshBasicMaterial, OrthographicCamera, AmbientLight, PCFSoftShadowMap, VSMShadowMap, Vector3, sRGBEncoding, Vector2} from "three"
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-// import {GUI} from 'three/examples/jsm/libs/dat.gui.module'
+import {GUI} from 'three/examples/jsm/libs/dat.gui.module'
 // import {OutlineEffect} from "three/examples/jsm/effects/OutlineEffect.js"
 import {getOutdoorLighting, getEntity, entities} from "./lib/entities"
 import { loadAll } from "./lib/loader";
@@ -23,8 +23,7 @@ scene.add(playerCam.camera)
 var renderer = new WebGLRenderer({antialias:false});
 // THIS is why my stuff all looked different than in Blender
 renderer.outputEncoding = sRGBEncoding;
-var loaded = false
-
+ 
 function resizeRenderer(){
     var targetResolutionY = 600
     var pixelSize = window.innerHeight / targetResolutionY;
@@ -58,7 +57,6 @@ loadAll(function(err){
     // set up scene
     scene.add(entities.scene)
     getOutdoorLighting().forEach(l=>scene.add(l))
-    loaded = true;
 })
 
 // var controls = new OrbitControls( camera, renderer.domElement );
@@ -85,13 +83,25 @@ function onWindowResize() {
     resizeRenderer()
 }
 var clock = new Clock();
-clock.start(); 
+clock.start();
+var lastDelta = 0;
 function render(){
-    if (!loaded){
+    if (!window.started){
         window.requestAnimationFrame(render)
         return;
     }
     var delta = clock.getDelta();
+
+    // this block limits rendered FPS (good for testing to see where I forget to use delta)
+    // if (delta + lastDelta < 1/10){
+    //     console.log(delta + lastDelta)
+    //     lastDelta += delta;
+    //     window.requestAnimationFrame(render)
+    //     return;
+    // } else {
+    //     delta += lastDelta;
+    //     lastDelta = 0;
+    // }
 
     // console.log(scene)
 
@@ -100,18 +110,6 @@ function render(){
     entities.water.material.uniforms.time.value = clock.getElapsedTime()
     entities.streams.forEach(s=>s.material.uniforms.time.value = clock.getElapsedTime())
 
-
-    /*
-        handle 30 or fewer FPS
-        MOST update functions handle delta correctly but not all of them.
-        this gives us a reasonable approximation - things that don't use delta (usually damping) will 
-        get done twice, things that DO use delta should handle it appropriately since we divide by the delta.
-    */
-    // var nUpdates = Math.floor(delta / (1/31)) + 1;
-    // nUpdates = Math.min(nUpdates,3);
-    // if (nUpdates > 1){
-    //     console.log("JANK",nUpdates)
-    // }
     var nUpdates = 1;
 
     for (var i = 0; i < nUpdates; i++){
@@ -120,12 +118,7 @@ function render(){
 
     updateObjects(scene, delta)
 
-    // controls.target.set(entities.character.location)
-
-    // camera.position.addVectors(new Vector3(0,10,15), entities.playerFollower.position)
-    // camera.lookAt(entities.playerFollower.position);
-
-    window.requestAnimationFrame(render);
+    requestAnimationFrame( render );
 
 }
 
