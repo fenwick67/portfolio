@@ -91,6 +91,7 @@ function render(){
         return;
     }
     var delta = clock.getDelta();
+    // console.log(delta)
 
     // this block limits rendered FPS (good for testing to see where I forget to use delta)
     // if (delta + lastDelta < 1/10){
