@@ -4,7 +4,7 @@ window.quality = 0;
 var loadCount = 0;
 const REQUIRED_LOADS = 2;
 
-window.debug = process.env.NODE_ENV === 'development';
+// window.debug = process.env.NODE_ENV === 'development';
 
 var mainFunc = null;
 
@@ -46,7 +46,7 @@ window.onAssetLoad = function(str){
         }
         // addButton("Potato 🥔&#xFE0F;","Start",-1);
         addButton("Lo-Fi 👾&#xFE0F;","Lowers render resolution",0);
-        addButton("Pretty 💻&#xFE0F","Turn on shadowmaps and antialiasing",1);
+        addButton("Pretty 💻&#xFE0F;✨&#xFE0F;","Turn on shadowmaps and antialiasing",1);
         if (window.debug){
             document.getElementById('loader').style.display="none"
             document.getElementById('loader').innerHTML=""

@@ -1,9 +1,9 @@
 
-import {Scene, PerspectiveCamera, WebGLRenderer, HemisphereLight, AnimationMixer, Clock, HemisphereLightHelper, DirectionalLight, DirectionalLightHelper, ACESFilmicToneMapping, NoToneMapping, LinearToneMapping, ReinhardToneMapping, Uncharted2ToneMapping, CineonToneMapping, MeshToonMaterial, MeshBasicMaterial, OrthographicCamera, AmbientLight, PCFSoftShadowMap, VSMShadowMap, Vector3, sRGBEncoding, Vector2} from "three"
+import {Scene, PerspectiveCamera, WebGLRenderer, HemisphereLight, AnimationMixer, Clock, HemisphereLightHelper, DirectionalLight, DirectionalLightHelper, ACESFilmicToneMapping, NoToneMapping, LinearToneMapping, ReinhardToneMapping, Uncharted2ToneMapping, CineonToneMapping, MeshToonMaterial, MeshBasicMaterial, OrthographicCamera, AmbientLight, PCFSoftShadowMap, VSMShadowMap, Vector3, sRGBEncoding, Vector2, FogExp2, Color} from "three"
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import {GUI} from 'three/examples/jsm/libs/dat.gui.module'
-// import {OutlineEffect} from "three/examples/jsm/effects/OutlineEffect.js"
+import {OutlineEffect} from "three/examples/jsm/effects/OutlineEffect.js"
 import {getOutdoorLighting, getEntity, entities} from "./lib/entities"
 import { loadAll } from "./lib/loader";
 // import { waterMaterial } from "./lib/waterShader";
@@ -35,6 +35,10 @@ function run(quality){
     window.renderer = renderer;
     // THIS is why my stuff all looked different than in Blender
     renderer.outputEncoding = sRGBEncoding;
+
+    // fog
+    scene.fog = new FogExp2( 0xb4d7ee, 0.008 );
+    scene.background = new Color( 0xb4d7ee );
     
     function resizeRenderer(){
         if (quality < 1){
