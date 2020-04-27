@@ -23,7 +23,7 @@
         #touch-left.pressed #stick-center{
             background:var(--button-active-bg) !important;
         }
-        canvas{
+        #dialog-canvas{
             image-rendering:crisp-edges;
             image-rendering:-moz-crisp-edges;
             image-rendering:pixelated;
@@ -36,7 +36,7 @@
             max-height:50vh;
             object-fit:contain;
             background: transparent;
-            object-position:center top;
+            object-position:center bottom;
             transition: bottom 0.3s cubic-bezier(0.63, 1.4, 0.63, 0.99);
         }
         #dialog-canvas:not(.active){
@@ -53,7 +53,7 @@
             justify-content: center;
             font-family:Verdana, Geneva, sans-serif;/* looks great bold */
             font-weight:1000;
-            font-size: 2rem;
+            font-size: 3vh;
             -webkit-filter: brightness(1.3);
             filter: brightness(1.3);
             background:url("res/cliff.png");
@@ -97,7 +97,7 @@
             padding:1rem 1.7rem;
             color:#fff;
             cursor:pointer;
-            margin:2rem;
+            /* margin:1rem; */
             border: solid 0.15em white;
             box-shadow:rgba(0,0,0,0.4) 0 0.05em 0.2em 0em;
             transform:perspective(100vh) rotateX(45deg) translate3d(0px,-1.5em,0px);

@@ -6,6 +6,8 @@ const REQUIRED_LOADS = 2;
 
 window.debug = process.env.NODE_ENV === 'development';
 
+var mainFunc = null;
+
 window.onAssetLoad = function(str){
     console.log(str)
     loadCount++;
@@ -14,7 +16,7 @@ window.onAssetLoad = function(str){
         window.assetsLoaded = true;
         // now click to start, fullscreen
         
-        document.getElementById('loader-message').innerHTML = '';
+        document.getElementById('loader-message').innerHTML = 'Select graphics quality';
         document.getElementById('loader').removeChild(document.getElementById('loader-progress'))
 
         function addButton(text, alt, quality){
@@ -32,6 +34,7 @@ window.onAssetLoad = function(str){
                     b.removeEventListener('click',onButtonClick)
                     window.quality = quality
                     window.started = true;
+                    mainFunc(quality)
                     document.documentElement.requestFullscreen()
 
                 },100)
@@ -41,12 +44,15 @@ window.onAssetLoad = function(str){
             document.getElementById('loader').appendChild(b)
 
         }
-        addButton("Let's Go, Flamingo!","Start",0);
+        // addButton("Potato 🥔&#xFE0F;","Start",-1);
+        addButton("Lo-Fi 👾&#xFE0F;","Lowers render resolution",0);
+        addButton("Pretty 💻&#xFE0F","Turn on shadowmaps and antialiasing",1);
         if (window.debug){
             document.getElementById('loader').style.display="none"
             document.getElementById('loader').innerHTML=""
             window.started = true;
             window.quality = 1;
+            setTimeout(_=>mainFunc(1), 0)
         }
     }
 }
@@ -56,6 +62,8 @@ window.onAssetLoadError = function(e){
 }
 
 import('./main').then((main)=>{
+        mainFunc = main.run;
         window.onAssetLoad('Loading Assets')
+        main.init();
     }
     ).catch(window.onAssetLoadError)
