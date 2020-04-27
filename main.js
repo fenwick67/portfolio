@@ -11,6 +11,7 @@ import {input} from './lib/input'
 import {playerCam} from './lib/playerCam'
 import {updateObjects} from './lib/updatable'
 
+const ALT_TIME = true;
 
 var assetsLoaded = false;
 
@@ -106,13 +107,28 @@ function run(quality){
     var clock = new Clock();
     clock.start();
     var lastDelta = 0;
+    var lastTime = null
     function render(){
         if (!window.started){
             window.requestAnimationFrame(render)
             return;
         }
-        var delta = clock.getDelta();
-        // console.log(delta)
+
+        var delta;
+
+        if (ALT_TIME){
+            var t = clock.getElapsedTime()
+            if (!lastTime){
+                lastTime = t - 0.016;
+            }
+            delta = (t - lastTime);
+            lastTime += delta;
+        } else {
+            delta = clock.getDelta()
+        }
+
+        
+        // console.log(delta.toFixed(10))
 
         // this block limits rendered FPS (good for testing to see where I forget to use delta)
         // if (delta + lastDelta < 1/10){
