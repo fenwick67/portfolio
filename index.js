@@ -4,7 +4,7 @@ window.quality = 0;
 var loadCount = 0;
 const REQUIRED_LOADS = 2;
 
-// window.debug = process.env.NODE_ENV === 'development';
+window.debug = process.env.NODE_ENV === 'development';
 
 var mainFunc = null;
 
