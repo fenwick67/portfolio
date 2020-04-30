@@ -27,6 +27,8 @@ window.onAssetLoad = function(str){
             b.title = alt;
             function onButtonClick(){
                 // document.documentElement.requestFullscreen()
+
+                // give me 100ms for stuff to work out
                 setTimeout(()=>{
                     
                     document.getElementById('loader').style.display="none"
@@ -52,7 +54,7 @@ window.onAssetLoad = function(str){
             document.getElementById('loader').innerHTML=""
             window.started = true;
             window.quality = 1;
-            setTimeout(_=>mainFunc(1), 0)
+            setTimeout(_=>mainFunc(1),100)
         }
     }
 }
