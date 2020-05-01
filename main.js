@@ -1,15 +1,20 @@
 
-import {Scene, PerspectiveCamera, WebGLRenderer, HemisphereLight, AnimationMixer, Clock, HemisphereLightHelper, DirectionalLight, DirectionalLightHelper, ACESFilmicToneMapping, NoToneMapping, LinearToneMapping, ReinhardToneMapping, Uncharted2ToneMapping, CineonToneMapping, MeshToonMaterial, MeshBasicMaterial, OrthographicCamera, AmbientLight, PCFSoftShadowMap, VSMShadowMap, Vector3, sRGBEncoding, Vector2, FogExp2, Color} from "three"
+import {Scene, PerspectiveCamera, WebGLRenderer, HemisphereLight, AnimationMixer, Clock, HemisphereLightHelper, DirectionalLight, DirectionalLightHelper, ACESFilmicToneMapping, NoToneMapping, LinearToneMapping, ReinhardToneMapping, CineonToneMapping, MeshToonMaterial, MeshBasicMaterial, OrthographicCamera, AmbientLight, PCFSoftShadowMap, VSMShadowMap, Vector3, sRGBEncoding, Vector2, FogExp2, Color} from "three"
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import {GUI} from 'three/examples/jsm/libs/dat.gui.module'
-import {OutlineEffect} from "three/examples/jsm/effects/OutlineEffect.js"
 import {getOutdoorLighting, getEntity, entities} from "./lib/entities"
 import { loadAll } from "./lib/loader";
 // import { waterMaterial } from "./lib/waterShader";
 import {input} from './lib/input'
 import {playerCam} from './lib/playerCam'
 import {updateObjects} from './lib/updatable'
+import {EffectComposer} from 'three/examples/jsm/postprocessing/EffectComposer'
+import {RenderPass} from 'three/examples/jsm/postprocessing/RenderPass'
+import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass'
+import { LuminosityShader } from 'three/examples/jsm/shaders/LuminosityShader';
+import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader';
+import {FancyRenderer, CheapRenderer, NormalRenderer} from './lib/post-processing/renderer'
 
 const ALT_TIME = true;
 
@@ -32,63 +37,28 @@ function run(quality){
 
     scene.add(playerCam.camera)
 
-    var renderer = new WebGLRenderer({antialias:quality > 0});
+    var renderer;
+    if (quality == 0){
+        renderer = CheapRenderer(scene, playerCam.camera)
+    } else if (quality == 1) {
+        renderer = NormalRenderer(scene, playerCam.camera);
+    } else if (quality == 2) {
+        renderer = FancyRenderer(scene, playerCam.camera);
+    }
     window.renderer = renderer;
-    // THIS is why my stuff all looked different than in Blender
-    renderer.outputEncoding = sRGBEncoding;
 
     // fog
     scene.fog = new FogExp2( 0xb4d7ee, 0.008 );
     scene.background = new Color( 0xb4d7ee );
-    
+
     function resizeRenderer(){
-        if (quality < 1){
-            var targetResolutionY = (quality == -1) ? 300 : 300;
-            var pixelSize = window.innerHeight / targetResolutionY;
-            pixelSize = Math.floor(pixelSize);
-            pixelSize = Math.max(pixelSize, 1);
-    
-            var rendererX = Math.ceil(window.innerWidth / pixelSize);
-            var rendererY = Math.ceil(window.innerHeight / pixelSize);
-    
-            renderer.setSize( rendererX, rendererY);
-            var styleW = Math.round(rendererX * pixelSize );
-            var styleH = Math.round(rendererY * pixelSize );
-                
-            var styleImRendering = `image-rendering:optimizeSpeed;
-            image-rendering:-moz-crisp-edges; 
-            image-rendering:-o-crisp-edges;
-            image-rendering:-webkit-optimize-contrast;
-            image-rendering:optimize-contrast;
-            image-rendering:crisp-edges;
-            image-rendering:pixelated;
-            -ms-interpolation-mode:nearest-neighbor;`;
-            if (quality == -1){styleImRendering = ''}
-            renderer.domElement.style = `width: ${styleW}; height: ${styleH}; ${styleImRendering}`;    
-        } else {
-            renderer.setSize( window.innerWidth, window.innerHeight);
-        }
-
-
+        renderer.resize();
     }
 
     document.body.appendChild( renderer.domElement );
     resizeRenderer();
 
-
-    // var controls = new OrbitControls( camera, renderer.domElement );
-    // // controls.addEventListener( 'change', render ); // use if there is no animation loop
-    // controls.minDistance = 10;
-    // controls.maxDistance = 100;
-    // controls.target.set( 0, 0, - 0.2 );
-    // controls.maxPolarAngle = 1.0
-    // controls.enableKeys = false;
-    // controls.panSpeed = 0;
-    // controls.keyPanSpeed = 0;
-    // controls.update();
-
     window.addEventListener( 'resize', onWindowResize, false );
-
 
     renderer.shadowMap.type = PCFSoftShadowMap;
     renderer.shadowMap.enabled = quality > 0;
@@ -143,7 +113,8 @@ function run(quality){
 
         // console.log(scene)
 
-        renderer.render(scene, playerCam.camera);
+        renderer.doRender(scene, playerCam.camera);
+        
 
         entities.water.material.uniforms.time.value = clock.getElapsedTime()
         entities.streams.forEach(s=>s.material.uniforms.time.value = clock.getElapsedTime())
@@ -194,9 +165,6 @@ function run(quality){
     // })
     // gui.open()
 
-    renderer.toneMapping = Uncharted2ToneMapping;
-    renderer.toneMappingWhitePoint = 1.0;
-    renderer.toneMappingExposure = 1.1;
 
 }
 
