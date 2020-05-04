@@ -15,6 +15,7 @@ import {ShaderPass} from 'three/examples/jsm/postprocessing/ShaderPass'
 import { LuminosityShader } from 'three/examples/jsm/shaders/LuminosityShader';
 import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader';
 import {FancyRenderer, CheapRenderer, NormalRenderer} from './lib/post-processing/renderer'
+import {confettiUpdate} from "./lib/post-processing/confetti"
 
 const ALT_TIME = true;
 
@@ -37,6 +38,10 @@ function run(quality){
 
     scene.add(playerCam.camera)
 
+    // fog
+    scene.fog = new FogExp2( 0xb4d7ee, 0.008 );
+    scene.background = new Color( 0xb4d7ee );
+    
     var renderer;
     if (quality == 0){
         renderer = CheapRenderer(scene, playerCam.camera)
@@ -47,9 +52,6 @@ function run(quality){
     }
     window.renderer = renderer;
 
-    // fog
-    scene.fog = new FogExp2( 0xb4d7ee, 0.008 );
-    scene.background = new Color( 0xb4d7ee );
 
     function resizeRenderer(){
         renderer.resize();
@@ -97,6 +99,9 @@ function run(quality){
             delta = clock.getDelta()
         }
 
+        // clamp to 20FPS.
+        delta = Math.min(delta,.05);
+
         
         // console.log(delta.toFixed(10))
 
@@ -113,7 +118,8 @@ function run(quality){
 
         // console.log(scene)
 
-        renderer.doRender(scene, playerCam.camera);
+        confettiUpdate(scene, delta)
+        renderer.doRender(scene, playerCam.camera, delta);
         
 
         entities.water.material.uniforms.time.value = clock.getElapsedTime()

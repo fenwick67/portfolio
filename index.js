@@ -49,12 +49,12 @@ window.onAssetLoad = function(str){
         // addButton("Potato 🥔&#xFE0F;","Start",-1);
         addButton("Lo-Fi 👾&#xFE0F;","Lowers render resolution",0);
         addButton("Normal 💻&#xFE0F;","Turn on shadowmaps and antialiasing",1);
-        addButton("Pretty ✨&#xFE0F;💻&#xFE0F;✨&#xFE0F;","Turn on shadowmaps and antialiasing",2);
+        // addButton("Pretty ✨&#xFE0F;💻&#xFE0F;✨&#xFE0F;","Turn on shadowmaps and antialiasing",2);
         if (window.debug){
             document.getElementById('loader').style.display="none"
             document.getElementById('loader').innerHTML=""
             window.started = true;
-            window.quality = 2;
+            window.quality = 1;
             setTimeout(_=>mainFunc(window.quality),1)
         }
     }
