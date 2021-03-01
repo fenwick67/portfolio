@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.19",
-    "three": "^0.114.0"
+    "three": "^0.125.0"
   },
   "assetsPath": "res",
   "scripts": {
